@@ -1,0 +1,212 @@
+/******************************************
+/* CSS
+/*******************************************/
+
+/* Box Model Hack */
+*{
+  box-sizing: border-box;
+}
+
+html{
+  font-size: 62.5%;
+  padding: 5rem;
+}
+
+main{
+  font-size: 1.6rem;
+}
+
+h2{
+  font-size: 3rem;
+}
+
+h3{
+  font-size: 1.6rem;
+}
+
+
+
+
+footer {
+  border-top: .1rem solid black;
+  margin-top: 12rem;
+}
+
+form {
+  border-bottom: .2rem solid black;
+  padding-bottom: 2rem;
+}
+
+#spell,  #spellDescription  {
+  display: flex;
+  flex-direction: column;
+}
+
+ #spellReference{
+  display: flex;
+  flex-flow: row wrap;
+  margin: 2rem 0;
+}
+
+#spell img{
+  height: 5rem;
+  width:5rem;
+  border: .1rem solid rgb(150, 150, 150);
+  border-radius: 5rem;
+}
+
+#spellTitle p {
+  font-size: 1.3rem;
+}
+
+#spellTitle{
+  display: flex;
+  flex-flow: row nowrap;
+  /* margin: 2rem 0; */
+}
+
+#spellTitle > section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 2.5rem;
+}
+
+#spellReference > section {
+ display: flex;
+ flex-direction: column;
+ justify-content: space-around;
+ flex: 1;
+ /* border: .1rem solid black; */
+ padding: 1rem;
+}
+
+#spellReference > section > h3,
+#spellReference > section > p {
+  display: inline;
+}
+
+#spellTitle > section > *,
+#spellReference > section > * {
+  margin: 0;
+  padding: 0;
+  
+ }
+
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
+/* body {
+  font: 16px Arial;
+} */
+
+.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+input {
+  border: .1rem solid transparent;
+  background-color: #f1f1f1;
+  padding: 1rem;
+  /* font-size: 16px; */
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+/* button[type=button] {
+  background-color: DodgerBlue;
+  color: #fff;
+} */
+.autocomplete-items {
+  position: absolute;
+  border: .1rem solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 1rem;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: .1rem solid #d4d4d4;
+}
+
+  /*when hovering an item:*/
+.autocomplete-items div:hover {
+  background-color: #e9e9e9;
+}
+
+  /*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+
+
+
+/* autocomplete original */
+/* * { box-sizing: border-box; }
+body {
+  font: 16px Arial;
+} */
+
+  /*the container must be positioned relative:*/
+/* .autocomplete {
+  position: relative;
+  display: inline-block;
+} */
+
+/* input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+} */
+
+/* input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+} */
+
+/* .autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99; */
+
+  /*position the autocomplete items to be the same width as the container:*/
+  /* top: 100%;
+  left: 0;
+  right: 0;
+} */
+
+/* .autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+} */
+
+  /*when hovering an item:*/
+/* .autocomplete-items div:hover {
+  background-color: #e9e9e9;
+} */
+
+  /*when navigating through the items using the arrow keys:*/
+/* .autocomplete-active {
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+} */
