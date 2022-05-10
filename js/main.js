@@ -7,10 +7,10 @@ const spellSectionList = document.querySelector("ul")
 const p = document.createElement('p')
 const li = document.createElement('li')
 const img = document.createElement('img')
-const damageMap = new Map()
-buildDamageMap()
-//console.log(damageMap.get("acid"))
-//console.log([...damageMap], damageMap.get("acid"))
+const imgSymbolMap = new Map()
+buildimgSymbolMap()
+//console.log(imgSymbolMap.get("acid"))
+//console.log([...imgSymbolMap], imgSymbolMap.get("acid"))
 
 /* button set up */
 document.querySelector('button').addEventListener('click', getSpellInfo)
@@ -66,10 +66,10 @@ function getSpellInfo() {
                 elementsToAdd.push(createElement("h2", data.name))
             }
             if (data.damage) {
-                console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${damageMap.get(data.damage.damage_type.index)}`) //13 options (list above)
-                // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, damageMap.get(data.damage.damage_type.index)))
+                console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${imgSymbolMap.get(data.damage.damage_type.index)}`) //13 options (list above)
+                // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, imgSymbolMap.get(data.damage.damage_type.index)))
                 elementsToAdd.push((createSectionWithChildren([
-                    createImg(damageMap.get(data.damage.damage_type.index), data.damage.damage_type.name, data.damage.damage_type.name),
+                    createImg(imgSymbolMap.get(data.damage.damage_type.index), data.damage.damage_type.name, data.damage.damage_type.name),
                     createElement("p", `${data.damage.damage_type.name} Damage`)
                 ])))
             }
@@ -118,9 +118,9 @@ function getSpellInfo() {
             fragment.append(createSectionWithChildren(elementsToAdd, "spellReference"))
 
             // if (data.damage) {
-            //     console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${damageMap.get(data.damage.damage_type.index)}`) //13 options (list above)
-            //     // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, damageMap.get(data.damage.damage_type.index)))
-            //     fragment.appendChild(createSectionWithChildren([createElement("h3", `Damage Type`), createImg(damageMap.get(data.damage.damage_type.index)), createElement("p", data.damage.damage_type.name)]))
+            //     console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${imgSymbolMap.get(data.damage.damage_type.index)}`) //13 options (list above)
+            //     // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, imgSymbolMap.get(data.damage.damage_type.index)))
+            //     fragment.appendChild(createSectionWithChildren([createElement("h3", `Damage Type`), createImg(imgSymbolMap.get(data.damage.damage_type.index)), createElement("p", data.damage.damage_type.name)]))
             // }
 
             /* section: #spellDescription */
@@ -200,24 +200,105 @@ function printTest(label, variable) {
     }
 }
 
-function buildDamageMap() {
 
-    damageMap.set("acid", "https://img.icons8.com/color/344/acid-on-surface.png") //flask: https://img.icons8.com/color/344/acid-flask.png
-    damageMap.set("bludgeoning", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-hammer-museum-icongeek26-flat-icongeek26.png")
-    damageMap.set("cold", "https://img.icons8.com/external-tulpahn-flat-tulpahn/344/external-snowy-weather-tulpahn-flat-tulpahn.png")
-    //"https://img.icons8.com/external-microdots-premium-microdot-graphic/344/external-freeze-christmas-new-year-vol1-microdots-premium-microdot-graphic.")
-    damageMap.set("fire", "https://img.icons8.com/external-flat-juicy-fish/344/external-fossil-vehicle-mechanics-flat-flat-juicy-fish.png")
-    damageMap.set("force", "https://img.icons8.com/external-tulpahn-outline-color-tulpahn/344/external-spell-book-fairy-tale-tulpahn-outline-color-tulpahn.png")
-    damageMap.set("lightning", "https://img.icons8.com/external-wanicon-flat-wanicon/344/external-lightning-nature-wanicon-flat-wanicon.png")
-    damageMap.set("necrotic", "https://img.icons8.com/external-flat-juicy-fish/344/external-death-crisis-management-flat-flat-juicy-fish.png")
-    damageMap.set("piercing", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-spear-alaska-icongeek26-flat-icongeek26.png")
-    damageMap.set("poison", "https://img.icons8.com/color/344/poison-bottle.png")
-    damageMap.set("psychic", "https://img.icons8.com/external-flatart-icons-outline-flatarticons/344/external-mind-office-essentials-and-operational-exellence-flatart-icons-outline-flatarticons.png")
-    damageMap.set("radiant", "https://img.icons8.com/external-flaticons-flat-flat-icons/344/external-holy-ghost-religion-flaticons-flat-flat-icons.png")
-    damageMap.set("slashing", "https://img.icons8.com/external-victoruler-flat-victoruler/344/external-swords-chess-victoruler-flat-victoruler.png")
-    damageMap.set("thunder", "https://img.icons8.com/external-tal-revivo-bold-tal-revivo/344/external-wireless-power-logotype-with-lightning-bolt-sign-battery-bold-tal-revivo.png")
+
+/* START OOP REFACTOR */
+// basic set up with a heading and paragraph
+/* 
+example:
+let range = new SpellDetail("Range",12)
+let 
+*/
+class SpellDetail {
+    constructor(label, description, elementClass = SpellDetail, elementId = null) {
+        this.label = label
+        this.description = description
+        this.elementClass = elementClass
+        this.elementId = elementId
+    }
+
+    buildDomElement() {
+        const newDiv = document.createElement(div)
+        const newHeading = document.createElement(h3)
+        const newParagraph = document.createElement(p)
+        newHeading.innerText = this.label
+        newParagraph.innerText = this.description
+
+        if (elementClass) {
+            newDiv.class = this.elementlass
+        }
+
+        if (elementId) {
+            newDiv.id = this.elementId
+        }
+
+        return newDiv.append(newHeading, newParagraph)
+    }
 
 }
+
+// advanced set up with a heading, paragraph, and image
+class SpellDetailWithImage extends SpellDetail {
+    constructor(label, description, elementClass = "SpellDetailWithImage", elementId = null, elementImgSrc) {
+        super(label, description, elementClass, elementId)
+        this.elementImgSrc = elementImgSrc
+    }
+
+    buildDomElement() {
+        const newDiv = document.createElement(div)
+        const newImg = document.createElement(img)
+        const newHeading = document.createElement(h3)
+        const newParagraph = document.createElement(p)
+        newImg.src = this.elementImgSrc
+        newImg.alt = this.description
+        newImg.title = this.description
+        newHeading.innerText = this.label
+        newParagraph.innerText = this.description
+
+        if (elementClass) {
+            newDiv.class = this.elementClass
+        }
+
+        if (elementId) {
+            newDiv.id = this.elementId
+        }
+
+        return newDiv.append(newHeading, newParagraph)
+    }
+}
+
+
+/* END OOP REFACTOR */
+
+
+
+//later change to buildSchoolMap
+function buildimgSymbolMap() {
+
+    imgSymbolMap.set("acid", "https://img.icons8.com/color/344/acid-on-surface.png") //flask: https://img.icons8.com/color/344/acid-flask.png
+    imgSymbolMap.set("bludgeoning", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-hammer-museum-icongeek26-flat-icongeek26.png")
+    imgSymbolMap.set("cold", "https://img.icons8.com/external-tulpahn-flat-tulpahn/344/external-snowy-weather-tulpahn-flat-tulpahn.png")
+    //"https://img.icons8.com/external-microdots-premium-microdot-graphic/344/external-freeze-christmas-new-year-vol1-microdots-premium-microdot-graphic.")
+    imgSymbolMap.set("fire", "https://img.icons8.com/external-flat-juicy-fish/344/external-fossil-vehicle-mechanics-flat-flat-juicy-fish.png")
+    imgSymbolMap.set("force", "https://img.icons8.com/external-tulpahn-outline-color-tulpahn/344/external-spell-book-fairy-tale-tulpahn-outline-color-tulpahn.png")
+    imgSymbolMap.set("lightning", "https://img.icons8.com/external-wanicon-flat-wanicon/344/external-lightning-nature-wanicon-flat-wanicon.png")
+    imgSymbolMap.set("necrotic", "https://img.icons8.com/external-flat-juicy-fish/344/external-death-crisis-management-flat-flat-juicy-fish.png")
+    imgSymbolMap.set("piercing", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-spear-alaska-icongeek26-flat-icongeek26.png")
+    imgSymbolMap.set("poison", "https://img.icons8.com/color/344/poison-bottle.png")
+    imgSymbolMap.set("psychic", "https://img.icons8.com/external-flatart-icons-outline-flatarticons/344/external-mind-office-essentials-and-operational-exellence-flatart-icons-outline-flatarticons.png")
+    imgSymbolMap.set("radiant", "https://img.icons8.com/external-flaticons-flat-flat-icons/344/external-holy-ghost-religion-flaticons-flat-flat-icons.png")
+    imgSymbolMap.set("slashing", "https://img.icons8.com/external-victoruler-flat-victoruler/344/external-swords-chess-victoruler-flat-victoruler.png")
+    imgSymbolMap.set("thunder", "https://img.icons8.com/external-tal-revivo-bold-tal-revivo/344/external-wireless-power-logotype-with-lightning-bolt-sign-battery-bold-tal-revivo.png")
+
+}
+
+
+
+
+
+
+
+/* END MY CODE */
 
 
 
