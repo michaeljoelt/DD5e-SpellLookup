@@ -64,6 +64,12 @@ function getSpellInfo() {
             if (data.name) {
                 console.log(`Name: ${data.name}`)
                 elementsToAdd.push(createElement("h2", data.name))
+
+                //OOP TEST START
+                let name = new SpellDetail("Name", data.name, null, null)
+                console.log(`OOP TEST: ${JSON.stringify(name)}`)
+                elementsToAdd.push(name.buildDomElement())
+                //OOP TEST END
             }
             if (data.damage) {
                 console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${imgSymbolMap.get(data.damage.damage_type.index)}`) //13 options (list above)
@@ -72,6 +78,13 @@ function getSpellInfo() {
                     createImg(imgSymbolMap.get(data.damage.damage_type.index), data.damage.damage_type.name, data.damage.damage_type.name),
                     createElement("p", `${data.damage.damage_type.name} Damage`)
                 ])))
+
+                //OOP TEST START
+                let damage = new SpellDetailWithImage("Damage Type", data.damage.damage_type.name, null, null, imgSymbolMap.get(data.damage.damage_type.index))
+                console.log(`OOP TEST: ${JSON.stringify(damage)}`)
+                elementsToAdd.push(damage.buildDomElement())
+                //OOP TEST END
+
             }
 
             fragment.append(createSectionWithChildren(elementsToAdd, "spellTitle"))
@@ -209,8 +222,16 @@ example:
 let range = new SpellDetail("Range",12)
 let 
 */
+
+//TODO: spell should be able to have many spell details.... klsdjafkl
+class Spell {
+    constructor(name, spellDetails) {
+
+    }
+}
+
 class SpellDetail {
-    constructor(label, description, elementClass = SpellDetail, elementId = null) {
+    constructor(label, description, elementClass, elementId) {
         this.label = label
         this.description = description
         this.elementClass = elementClass
@@ -218,52 +239,62 @@ class SpellDetail {
     }
 
     buildDomElement() {
-        const newDiv = document.createElement(div)
-        const newHeading = document.createElement(h3)
-        const newParagraph = document.createElement(p)
+        const newDiv = document.createElement("div")
+        const newHeading = document.createElement("h3")
+        const newParagraph = document.createElement("p")
         newHeading.innerText = this.label
         newParagraph.innerText = this.description
 
-        if (elementClass) {
-            newDiv.class = this.elementlass
+        if (this.elementClass !== null) {
+            newDiv.class = this.elementClass
+        } else {
+            newDiv.class = "SpellDetail"
         }
 
-        if (elementId) {
+        if (this.elementId) {
             newDiv.id = this.elementId
         }
 
-        return newDiv.append(newHeading, newParagraph)
+        // console.log(`2 newDiv = ${newDiv}`)
+
+        newDiv.append(newHeading, newParagraph)
+        return newDiv
     }
 
 }
 
 // advanced set up with a heading, paragraph, and image
 class SpellDetailWithImage extends SpellDetail {
-    constructor(label, description, elementClass = "SpellDetailWithImage", elementId = null, elementImgSrc) {
+    constructor(label, description, elementClass, elementId, elementImgSrc) {
         super(label, description, elementClass, elementId)
         this.elementImgSrc = elementImgSrc
     }
 
     buildDomElement() {
-        const newDiv = document.createElement(div)
-        const newImg = document.createElement(img)
-        const newHeading = document.createElement(h3)
-        const newParagraph = document.createElement(p)
+        let newDiv = document.createElement("div")
+        const newImg = document.createElement("img")
+        const newHeading = document.createElement("h3")
+        const newParagraph = document.createElement("p")
         newImg.src = this.elementImgSrc
         newImg.alt = this.description
         newImg.title = this.description
         newHeading.innerText = this.label
         newParagraph.innerText = this.description
 
-        if (elementClass) {
-            newDiv.class = this.elementClass
+        if (this.elementClass !== null) {
+            newDiv.class = this.elementlass
+        } else {
+            newDiv.class = "SpellDetailWithImage"
         }
 
-        if (elementId) {
+        if (this.elementId) {
             newDiv.id = this.elementId
         }
 
-        return newDiv.append(newHeading, newParagraph)
+        newDiv.append(newHeading, newParagraph, newImg)
+
+        return newDiv
+
     }
 }
 
