@@ -1,12 +1,5 @@
 /* variable setup */
-let testMode = true;
-let spellList = []
 let fragment = document.createDocumentFragment();
-const spellSection = document.querySelector("#spell")
-const spellSectionList = document.querySelector("ul")
-const p = document.createElement('p')
-const li = document.createElement('li')
-const img = document.createElement('img')
 const imgSymbolMap = new Map()
 buildimgSymbolMap()
 //console.log(imgSymbolMap.get("acid"))
@@ -20,6 +13,7 @@ window.onload = () => {
     getSpellList();
 }
 
+//TODO create all spell objects here since making requests anyway?
 function getSpellList() {
     fetch("https://www.dnd5eapi.co/api/spells")
         .then(res => res.json()) // parse response as JSON
@@ -42,15 +36,11 @@ function getSpellList() {
 
 //handle button click
 function getSpellInfo() {
-
     clearDom()
-
     //event.preventDefault // breaks dropdown
-
     //replace spaces with - to match api's syntax
     const choice = ((document.querySelector('input').value).replace(/\s/g, '-').replace('/', '-').replace("'", "")).toLowerCase()
     const url = `https://www.dnd5eapi.co/api/spells/${choice}`
-
     console.log(url)
 
     fetch(url)
@@ -59,106 +49,60 @@ function getSpellInfo() {
             console.log("On input submission, get spell info:")
             console.log(data)
 
-            /* section: #spellTitle */
-            let elementsToAdd = []
             if (data.name) {
                 console.log(`Name: ${data.name}`)
                 elementsToAdd.push(createElement("h2", data.name))
-
                 //OOP TEST START
                 let name = new SpellDetail("Name", data.name, null, null)
                 console.log(`OOP TEST: ${JSON.stringify(name)}`)
-                elementsToAdd.push(name.buildDomElement())
-                //OOP TEST END
             }
             if (data.damage) {
                 console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${imgSymbolMap.get(data.damage.damage_type.index)}`) //13 options (list above)
-                // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, imgSymbolMap.get(data.damage.damage_type.index)))
-                elementsToAdd.push((createSectionWithChildren([
-                    createImg(imgSymbolMap.get(data.damage.damage_type.index), data.damage.damage_type.name, data.damage.damage_type.name),
-                    createElement("p", `${data.damage.damage_type.name} Damage`)
-                ])))
-
-                //OOP TEST START
-                let damage = new SpellDetailWithImage("Damage Type", data.damage.damage_type.name, null, null, imgSymbolMap.get(data.damage.damage_type.index))
-                console.log(`OOP TEST: ${JSON.stringify(damage)}`)
-                elementsToAdd.push(damage.buildDomElement())
-                //OOP TEST END
-
             }
 
-            fragment.append(createSectionWithChildren(elementsToAdd, "spellTitle"))
-
-            /* section: #spellReference 
-            - find what's available and add them all together at end */
-            elementsToAdd = []
-            // elementsToAdd.push(createElement("h3", "Quick Reference"))
             if (data.range) {
                 console.log(`Range: ${data.range}`)
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Range:`), createElement("p", data.range)]))
             }
 
             if (data.ritual) {
                 console.log(`Ritual: ${data.ritual}`)
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Ritual:`), createElement("p", data.ritual)]))
             }
 
             if (data.school) {
                 console.log(`School: ${data.school.name}`)
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `School:`), createElement("p", data.school.name)]))
             }
 
             if (data.casting_time) {
                 console.log(`Casting Time: ${data.casting_time}`)
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Casting Time:`), createElement("p", data.casting_time)]))
             }
 
             if (data.duration) {
                 console.log(`Duration: ${data.duration}`)
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Duration:`), createElement("p", data.duration)]))
             }
 
             if (data.attack_type) {
-                console.log(`Attack Type: ${data.attack_type}`) //melee, ranged, or spell... many don't even have this
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Attack Type:`), createElement("p", data.attack_type)]))
+                console.log(`Attack Type: ${data.attack_type}`)
             }
 
             if (data.level) {
                 console.log(`Level: ${data.level}`) //melee, ranged, or spell... many don't even have this
-                elementsToAdd.push(createSectionWithChildren([createElement("h3", `Level:`), createElement("p", data.level)]))
             }
 
-            fragment.append(createSectionWithChildren(elementsToAdd, "spellReference"))
-
-            // if (data.damage) {
-            //     console.log(`Damage Type: ${data.damage.damage_type.name} Image: ${imgSymbolMap.get(data.damage.damage_type.index)}`) //13 options (list above)
-            //     // fragment.appendChild(createElementWithImage("li", `Damage Type: ${data.damage.damage_type.name}`, imgSymbolMap.get(data.damage.damage_type.index)))
-            //     fragment.appendChild(createSectionWithChildren([createElement("h3", `Damage Type`), createImg(imgSymbolMap.get(data.damage.damage_type.index)), createElement("p", data.damage.damage_type.name)]))
-            // }
-
-            /* section: #spellDescription */
-            elementsToAdd = []
             if (data.desc[0]) {
                 console.log("Description:")
-                elementsToAdd.push(createElement("h3", "Description"))
                 data.desc.forEach(desc => {
                     console.log(desc)
-                    elementsToAdd.push(createElement("p", desc))
                 })
             }
             if (data.higher_level[0]) {
                 console.log("Higher Level Description:")
-                elementsToAdd.push(createElement("h3", "Higher Level"))
                 data.higher_level.forEach(desc => {
                     console.log(desc)
-                    elementsToAdd.push(createElement("p", desc))
                 })
             }
+
             fragment.append(createSectionWithChildren(elementsToAdd, "spellDescription"))
-
-            //append fragment to parent (allows all data to display in one load instead of many)
-            spellSection.append(fragment);
-
+            spellSection.append(fragment); //append fragment to parent (allows all data to display in one load instead of many)
         })
         .catch(err => {
             console.log(`error ${err}`)
@@ -173,160 +117,39 @@ function clearDom() {
     spellSection.append(fragment);
 }
 
-function createElement(element, value, id) {
-    const newItem = document.createElement(element);
-    newItem.innerText = value;
-    if (id) {
-        newItem.id = id
-    }
-    return newItem;
-}
 
-function createImg(src, alt, tooltip) {
-    const newImg = document.createElement("img");
-    newImg.src = src
-    newImg.alt = alt
-    newImg.title = tooltip
-    return newImg
-}
-
-// function createElementWithImage(element, value, imgUrl) {
-//     const newItem = document.createElement(element);
-//     newItem.innerHTML = `<img src="${imgUrl}"> ${value}`;
-//     return newItem;
-// }
-
-function createSectionWithChildren(arrayOfChildren, id) {
-    const newSection = document.createElement("section");
-    if (id) {
-        newSection.id = id
-    }
-    arrayOfChildren.forEach((element) => {
-        newSection.appendChild(element)
-    })
-    return newSection
-}
-
-function printTest(label, variable) {
-    if (testMode) {
-        console.log(`${label}: ${variable}`)
-    }
-}
-
-
-
-/* START OOP REFACTOR */
-// basic set up with a heading and paragraph
-/* 
-example:
-let range = new SpellDetail("Range",12)
-let 
-*/
-
-//TODO: spell should be able to have many spell details.... klsdjafkl
 class Spell {
     constructor(name, spellDetails) {
 
     }
 }
 
-class SpellDetail {
-    constructor(label, description, elementClass, elementId) {
-        this.label = label
-        this.description = description
-        this.elementClass = elementClass
-        this.elementId = elementId
-    }
-
-    buildDomElement() {
-        const newDiv = document.createElement("div")
-        const newHeading = document.createElement("h3")
-        const newParagraph = document.createElement("p")
-        newHeading.innerText = this.label
-        newParagraph.innerText = this.description
-
-        if (this.elementClass !== null) {
-            newDiv.class = this.elementClass
-        } else {
-            newDiv.class = "SpellDetail"
-        }
-
-        if (this.elementId) {
-            newDiv.id = this.elementId
-        }
-
-        // console.log(`2 newDiv = ${newDiv}`)
-
-        newDiv.append(newHeading, newParagraph)
-        return newDiv
-    }
-
-}
-
-// advanced set up with a heading, paragraph, and image
-class SpellDetailWithImage extends SpellDetail {
-    constructor(label, description, elementClass, elementId, elementImgSrc) {
-        super(label, description, elementClass, elementId)
-        this.elementImgSrc = elementImgSrc
-    }
-
-    buildDomElement() {
-        let newDiv = document.createElement("div")
-        const newImg = document.createElement("img")
-        const newHeading = document.createElement("h3")
-        const newParagraph = document.createElement("p")
-        newImg.src = this.elementImgSrc
-        newImg.alt = this.description
-        newImg.title = this.description
-        newHeading.innerText = this.label
-        newParagraph.innerText = this.description
-
-        if (this.elementClass !== null) {
-            newDiv.class = this.elementlass
-        } else {
-            newDiv.class = "SpellDetailWithImage"
-        }
-
-        if (this.elementId) {
-            newDiv.id = this.elementId
-        }
-
-        newDiv.append(newHeading, newParagraph, newImg)
-
-        return newDiv
-
-    }
-}
-
-
-/* END OOP REFACTOR */
-
-
-
-//later change to buildSchoolMap
 function buildimgSymbolMap() {
+    //TODO change to sprite map? https://preview.redd.it/kf0xb3u9rgnz.jpg?width=960&crop=smart&auto=webp&s=742116833a1ff624ac90b04ff65c3e983b736c93
+    //source: https://www.reddit.com/r/DnD/comments/71s8s8/art_schools_of_magic_symbols/
+    //how to use sprite image: https://www.w3schools.com/css/css_image_sprites.asp
 
-    imgSymbolMap.set("acid", "https://img.icons8.com/color/344/acid-on-surface.png") //flask: https://img.icons8.com/color/344/acid-flask.png
-    imgSymbolMap.set("bludgeoning", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-hammer-museum-icongeek26-flat-icongeek26.png")
-    imgSymbolMap.set("cold", "https://img.icons8.com/external-tulpahn-flat-tulpahn/344/external-snowy-weather-tulpahn-flat-tulpahn.png")
-    //"https://img.icons8.com/external-microdots-premium-microdot-graphic/344/external-freeze-christmas-new-year-vol1-microdots-premium-microdot-graphic.")
-    imgSymbolMap.set("fire", "https://img.icons8.com/external-flat-juicy-fish/344/external-fossil-vehicle-mechanics-flat-flat-juicy-fish.png")
-    imgSymbolMap.set("force", "https://img.icons8.com/external-tulpahn-outline-color-tulpahn/344/external-spell-book-fairy-tale-tulpahn-outline-color-tulpahn.png")
-    imgSymbolMap.set("lightning", "https://img.icons8.com/external-wanicon-flat-wanicon/344/external-lightning-nature-wanicon-flat-wanicon.png")
-    imgSymbolMap.set("necrotic", "https://img.icons8.com/external-flat-juicy-fish/344/external-death-crisis-management-flat-flat-juicy-fish.png")
-    imgSymbolMap.set("piercing", "https://img.icons8.com/external-icongeek26-flat-icongeek26/344/external-spear-alaska-icongeek26-flat-icongeek26.png")
-    imgSymbolMap.set("poison", "https://img.icons8.com/color/344/poison-bottle.png")
-    imgSymbolMap.set("psychic", "https://img.icons8.com/external-flatart-icons-outline-flatarticons/344/external-mind-office-essentials-and-operational-exellence-flatart-icons-outline-flatarticons.png")
-    imgSymbolMap.set("radiant", "https://img.icons8.com/external-flaticons-flat-flat-icons/344/external-holy-ghost-religion-flaticons-flat-flat-icons.png")
-    imgSymbolMap.set("slashing", "https://img.icons8.com/external-victoruler-flat-victoruler/344/external-swords-chess-victoruler-flat-victoruler.png")
-    imgSymbolMap.set("thunder", "https://img.icons8.com/external-tal-revivo-bold-tal-revivo/344/external-wireless-power-logotype-with-lightning-bolt-sign-battery-bold-tal-revivo.png")
+    /* switched to schools instead of damage type*/
+    imgSymbolMap.set("Abjuration", "https://img.icons8.com/color/344/shield.png")
+    imgSymbolMap.set("Conjuration", "https://img.icons8.com/external-two-tone-chattapat-/344/external-surprise-party-and-celebration-two-tone-chattapat-.png")
+    imgSymbolMap.set("Divination", "https://img.icons8.com/cotton/344/crystal-ball.png")
+    imgSymbolMap.set("Enchantment", "https://img.icons8.com/external-filled-outline-lima-studio/344/external-hypnotic-magic-filled-outline-lima-studio.png")
+    imgSymbolMap.set("Evocation", "https://img.icons8.com/color/344/weightlifting-skin-type-4.png")
+    imgSymbolMap.set("Illusion", "https://img.icons8.com/external-others-pike-picture/344/external-Illusionist-magic-others-pike-picture.png")
+    imgSymbolMap.set("Necromancy", "https://img.icons8.com/external-wanicon-two-tone-wanicon/344/external-grim-reaper-halloween-costume-avatar-wanicon-two-tone-wanicon.png")
+    imgSymbolMap.set("Transmutation", "https://img.icons8.com/office/344/chicken.png")
+    /*
+        Abjuration - Blocking, banishing, protecting 
+        Conjuration - Produce creatures or objects from another plane
+        Divination - Understanding the past, present and future
+        Enchantment - Entrancing and beguiling
+        Evocation - Raw combative power and damage
+        Illusion - Sensory deception and trickery 
+        Necromancy - Curses, creating undead thralls
+        Transmutation - Changing energy and matter 
+    */
 
 }
-
-
-
-
-
 
 
 /* END MY CODE */
